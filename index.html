@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#171717">
+<title>Operazione: Finché Divano Non Ci Separi — Escape Room</title>
+<style>
+:root{--ink:#191919;--paper:#f4efe4;--paper2:#e8decc;--red:#a83232;--gold:#c7a66b;--muted:#746d62;--green:#47745a;--blue:#3a5a78}
+*{box-sizing:border-box}
+body{margin:0;background:#242321;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.shell{max-width:820px;margin:auto;min-height:100vh;background:var(--paper);box-shadow:0 0 50px #0007}
+.topbar{background:var(--ink);color:var(--gold);padding:12px 20px;display:flex;justify-content:space-between;gap:10px;font-size:.7rem;letter-spacing:.07em;flex-wrap:wrap;align-items:center}
+.topbar .stats{display:flex;gap:14px;align-items:center}
+main{padding:clamp(17px,5vw,38px)}
+h1,h2,h3,p{margin-top:0}
+.kicker{font-size:.72rem;color:var(--red);letter-spacing:.12em;font-weight:900;text-transform:uppercase}
+h1{font-size:clamp(2rem,8vw,4rem);line-height:.98;letter-spacing:-.06em;margin:14px 0}
+h2{font-size:clamp(1.4rem,5vw,2.1rem);line-height:1.08}
+p{line-height:1.6}
+.subtitle{color:#5e574d;line-height:1.6}
+.stamp{display:inline-block;border:3px solid var(--red);color:var(--red);padding:7px 10px;transform:rotate(-3deg);font-weight:900;font-size:.76rem;letter-spacing:.08em}
+.rule{height:1px;background:#bdb09a;margin:23px 0}
+.paperbox{border:1px solid #bdb09a;padding:16px;background:#faf7f0;box-shadow:4px 4px 0 var(--paper2);margin:16px 0}
+.identity{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.identity div{background:var(--paper2);padding:13px;border-left:4px solid var(--red)}
+.identity strong{display:block;margin:6px 0}
+.small{font-size:.76rem;color:var(--muted);line-height:1.5}
+.btn{border:0;background:var(--ink);color:var(--paper);padding:13px 16px;font-weight:900;min-height:46px;transition:.15s}
+.btn:hover{background:#393630}
+.btn.red{background:var(--red)}
+.btn.red:hover{background:#8a2727}
+.btn.light{background:transparent;color:var(--ink);border:1px solid #8e8475}
+.btn.light:hover{background:#e8decc}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:19px}
+.hidden{display:none!important}
+.tag{display:inline-block;background:var(--ink);color:var(--gold);padding:5px 8px;font-size:.68rem;letter-spacing:.08em}
+.progress-wrap{margin:18px 0}
+.progress-label{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-bottom:7px}
+.progress{height:8px;background:#ddd2bf}
+.progress span{display:block;height:100%;background:var(--red);width:0;transition:width .3s}
+.room{border:1px solid #bdb09a;background:#e8decc;padding:12px;margin:15px 0;position:relative}
+.room svg{display:block;width:100%;height:auto;max-height:320px}
+.caption{font-size:.73rem;color:#665d50;margin-top:8px}
+.note{background:#f9f3e8;border:1px dashed #a99a80;padding:13px;margin:12px 0;line-height:1.55}
+.codeform{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.codeform input{min-width:0;flex:1;width:100%;max-width:240px;border:2px solid #9b8d77;background:#fffaf2;padding:12px;text-transform:uppercase;letter-spacing:.14em;font-weight:900}
+.feedback{padding:13px;background:#e5dece;border-left:4px solid var(--gold);margin-top:13px;line-height:1.55}
+.bad{border-left-color:var(--red)}
+.good{border-left-color:var(--green)}
+.options{display:grid;gap:8px}
+.option{width:100%;text-align:left;background:#faf7f0;border:1px solid #bdb09a;padding:12px;line-height:1.45;transition:.15s}
+.option:hover,.option.selected{border:2px solid var(--red);background:#f4e4df;transform:translateX(3px)}
+.inventory{background:#1c1b19;color:#e6d6b8;padding:12px;margin:12px 0;line-height:1.9}
+.inventory strong{color:var(--gold)}
+.inventory .item{display:inline-block;background:#3a3630;border:1px solid var(--gold);padding:5px 9px;margin:3px;font-size:.74rem;border-radius:3px}
+.certificate{border:8px double #9e8357;padding:clamp(16px,5vw,30px);text-align:center;background:#fbf7ed}
+.award{font-size:1rem;color:var(--red);font-weight:900;border:2px solid var(--red);padding:10px;display:inline-block;margin:12px 0;transform:rotate(-2deg)}
+.seal{width:70px;height:70px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;margin:17px auto;font-weight:900;border:4px dotted #e6b9a7}
+.footer{padding:15px 20px;background:var(--ink);color:#bdb4a4;font-size:.67rem;text-align:center;line-height:1.6}
+.redtext{color:var(--red)}
+.greentext{color:var(--green)}
+.center{text-align:center}
+.timer{display:inline-flex;align-items:center;gap:6px;background:#292725;color:var(--gold);padding:6px 10px;font-size:.78rem;font-weight:900;border-radius:3px}
+.timer.warn{background:var(--red);color:#fff;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.7}}
+
+/* Stanza 1: rotazione */
+.rotate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+@media(max-width:520px){.rotate-grid{grid-template-columns:repeat(2,1fr)}}
+.rotate-item{aspect-ratio:1;background:#e8decc;border:2px solid #9b8d77;border-radius:8px;display:grid;place-items:center;cursor:pointer;user-select:none;position:relative;overflow:hidden;transition:transform .5s cubic-bezier(.34,1.56,.64,1),background .3s,border-color .3s}
+.rotate-item:hover{background:#f0e6d2}
+.rotate-item .face{font-size:2.4rem;pointer-events:none;transition:opacity .3s}
+.rotate-item .back{position:absolute;inset:0;display:grid;place-items:center;font-size:.7rem;font-weight:900;letter-spacing:.04em;color:var(--red);background:#faf7f0;opacity:0;pointer-events:none;transition:opacity .3s;text-align:center;padding:4px}
+.rotate-item.flipped{transform:rotate(180deg)}
+.rotate-item.flipped .face{opacity:0}
+.rotate-item.flipped .back{opacity:1}
+.rotate-item.done{border-color:var(--green);box-shadow:0 0 0 3px #47745a33}
+
+/* Lista della spesa */
+.shopping-list{display:grid;gap:6px;margin:12px 0}
+.shop-item{display:flex;align-items:center;gap:10px;background:#faf7f0;border:1px solid #bdb09a;padding:10px 12px;cursor:pointer;transition:.15s;border-radius:4px}
+.shop-item:hover{background:#f0e6d2}
+.shop-item.selected{border:2px solid var(--red);background:#f4e4df;transform:translateX(3px)}
+.shop-item .check{width:22px;height:22px;border:2px solid #9b8d77;display:grid;place-items:center;font-size:.8rem;flex-shrink:0;border-radius:3px;color:transparent}
+.shop-item.selected .check{background:var(--red);color:#fff;border-color:var(--red)}
+.shop-item .word{font-weight:900;letter-spacing:.05em;flex:1}
+.shop-item .num{background:var(--ink);color:var(--gold);padding:3px 8px;font-size:.74rem;font-weight:900;border-radius:3px}
+
+/* Estrazione lettere */
+.extraction-box{display:grid;gap:6px;margin:12px 0}
+.extract-row{display:flex;align-items:center;gap:10px;background:#f0e8d8;padding:10px 12px;border-left:4px solid var(--gold);border-radius:3px}
+.extract-row .word{font-weight:900;letter-spacing:.05em}
+.extract-row .hintnum{color:var(--muted);font-size:.78rem;font-weight:900}
+.dnd-zone{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;min-height:50px;padding:10px;background:#f0e8d8;border:2px dashed #a99a80;border-radius:6px}
+.dnd-item{background:var(--ink);color:var(--gold);padding:10px 14px;font-weight:900;cursor:pointer;user-select:none;border-radius:4px;font-size:1.1rem;transition:.15s}
+.dnd-item:hover{background:#393630;transform:translateY(-2px)}
+.dnd-target{width:44px;height:44px;display:inline-grid;place-items:center;background:#fffaf2;border:2px solid #9b8d77;font-size:1.2rem;font-weight:900;border-radius:4px;transition:.15s}
+.dnd-target.over{border-color:var(--red);background:#f4e4df}
+.dnd-target.filled{background:var(--green);color:#fff;border-color:var(--green);cursor:pointer}
+
+/* Cifrario */
+.cipher-display{font-size:1.4rem;letter-spacing:.25em;font-weight:900;text-align:center;background:#f0e8d8;padding:14px;margin:10px 0;border:1px solid #bdb09a}
+.slider-wrap{display:flex;align-items:center;gap:12px;margin:12px 0;flex-wrap:wrap}
+.slider-wrap input[type=range]{flex:1;min-width:150px;accent-color:var(--red)}
+.slider-val{background:var(--ink);color:var(--gold);padding:6px 12px;font-weight:900;min-width:40px;text-align:center;border-radius:4px}
+
+/* Memory */
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}
+.memory-card{aspect-ratio:1;background:var(--ink);color:var(--gold);display:grid;place-items:center;font-size:1.5rem;font-weight:900;cursor:pointer;border-radius:4px;transition:.2s;user-select:none}
+.memory-card.flipped{background:var(--paper2);color:var(--ink)}
+.memory-card.matched{background:var(--green);color:#fff;cursor:default;opacity:.6}
+.memory-card:hover:not(.flipped):not(.matched){background:#393630}
+
+/* Sequenza */
+.seq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;max-width:340px}
+.seq-btn{aspect-ratio:1;background:var(--ink);color:var(--gold);font-size:1.4rem;font-weight:900;border:0;border-radius:6px;transition:.15s}
+.seq-btn:hover{background:#393630}
+.seq-btn.active{background:var(--red);color:#fff;transform:scale(1.05)}
+.seq-btn.correct{background:var(--green);color:#fff}
+.seq-btn.wrong{background:var(--red);color:#fff;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* Piccione */
+.pigeon-box{display:flex;gap:12px;align-items:flex-start;background:#f0e8d8;padding:14px;margin:12px 0;border-left:4px solid var(--blue);border-radius:4px}
+.pigeon-avatar{font-size:2.4rem;flex-shrink:0}
+.pigeon-text{line-height:1.55}
+.pigeon-text strong{color:var(--blue)}
+
+/* Badge */
+.badge{display:inline-block;background:var(--green);color:#fff;padding:3px 8px;font-size:.66rem;font-weight:900;letter-spacing:.06em;border-radius:3px}
+.badge.gold{background:var(--gold);color:var(--ink)}
+
+@media(max-width:480px){
+ .identity{grid-template-columns:1fr}
+ .topbar{font-size:.59rem}
+ .actions .btn{width:100%}
+ .codeform input{max-width:none}
+}
+@media print{
+ body{background:white}
+ .shell{box-shadow:none;max-width:none}
+ .topbar,.footer,.no-print{display:none!important}
+ main{padding:0}
+ .certificate{margin:8mm}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="topbar">
+ <span>M.A.T.R.I.M.O.N.I.O. · DIVISIONE 04</span>
+ <div class="stats">
+   <span id="scoreDisplay">PUNTI: 0</span>
+   <span id="timerDisplay" class="timer">⏱ 00:00</span>
+ </div>
+ <span>ARCHIVIO RISERVATO ▰</span>
+</div>
+<main>
+
+<!-- ============ INTRO ============ -->
+<section id="intro">
+<div class="stamp">CLASSIFICATO · LIVELLO DOMESTICO</div>
+<div class="kicker" style="margin-top:27px">Dossier 001 / protocollo escape room</div>
+<h1>FINCHÉ DIVANO<br>NON CI SEPARI</h1>
+<p class="subtitle">Un matrimonio. Un archivio sigillato. Quattro codici mancanti. Un piccione con accesso ai documenti riservati.</p>
+<div class="paperbox">
+ <div class="kicker">Mandato operativo</div>
+ <p>Il Ministero ha perso il fascicolo che certifica l'idoneità domestica dei coniugi. Senza quel documento, il divano verrà assegnato al Dipartimento dei Cuscini Orfani.</p>
+ <p>Agenti <strong>Marta Pasticcioni</strong> e <strong>Giulio Calzinpersi</strong>: esplorate le prove, trovate parole nascoste, decifrate i codici e recuperate il certificato prima che la burocrazia si mangi il vostro weekend.</p>
+ <p><strong>Regola fondamentale:</strong> osservate tutto. Se sembra decorativo, probabilmente è un indizio. Se sembra un piccione, non fidatevi.</p>
+</div>
+<div class="identity">
+ <div><span class="small">AGENTE A</span><strong>Marta Pasticcioni</strong><span class="small">Nome in codice: Direttrice del Caos</span></div>
+ <div><span class="small">AGENTE B</span><strong>Giulio Calzinpersi</strong><span class="small">Nome in codice: Uomo del «Fai tu»</span></div>
+</div>
+<div class="paperbox small" style="margin-top:16px">
+ <strong>⚠️ Regole di ingaggio:</strong><br>
+ • 4 stanze, 4 enigmi, 1 certificato finale.<br>
+ • Ogni errore costa <strong>5 punti</strong>.<br>
+ • Gli indizi costano 10 punti ciascuno, ma vi salvano.<br>
+ • Il cronometro parte al primo enigma. Nessun limite di tempo, ma il Ministero giudica.
+</div>
+<div class="actions">
+ <button class="btn red" onclick="begin()">ENTRA NELL'ARCHIVIO →</button>
+</div>
+</section>
+
+<!-- ============ STANZA 1 — A+B ============ -->
+<section id="room1" class="hidden">
+<div class="kicker">Stanza 01 · scena del crimine</div>
+<div class="progress-wrap">
+ <div class="progress-label"><span>FASCICOLO 1 DI 4</span><span id="progress1">FASE 1/3</span></div>
+ <div class="progress"><span id="bar1" style="width:0"></span></div>
+</div>
+<h2>Il salotto sotto sequestro</h2>
+<p class="subtitle">Quattro oggetti sul tavolino sono stati girati dal Ministero. Ruotateli per leggere la parola incisa sul retro. Poi incrociate i dati con la lista della spesa trovata nel cassetto.</p>
+
+<div id="phase1" class="paperbox">
+ <div class="kicker">Fase 1 — Ruota i reperti</div>
+ <p>Cliccate ciascun oggetto per girarlo di 180°. Sul retro c'è una parola.</p>
+ <div class="rotate-grid" id="rotateGrid"></div>
+ <div id="rotateStatus" class="small">Oggetti girati: 0/4</div>
+ <div id="inventory1" class="inventory"><strong>PAROLE SUL RETRO:</strong> nessuna ancora.</div>
+</div>
+
+<div id="phase2" class="paperbox hidden">
+ <div class="kicker">Fase 2 — Lista della spesa (reperto 07-B)</div>
+ <p>Il Ministero ha sequestrato questa lista. <strong>Alcune voci sono esche</strong>: non c'entrano con una serata sul divano. Selezionate solo le 4 voci valide.</p>
+ <div class="pigeon-box">
+   <div class="pigeon-avatar">🐦</div>
+   <div class="pigeon-text"><strong>Piccione:</strong> «Io ho visto tutto. Le voci giuste sono quelle che servono per una serata sul divano. Il cibo, le verdure e le superstizioni non contano. Fidati di me. O no?»</div>
+ </div>
+ <div class="shopping-list" id="shoppingList"></div>
+ <div class="actions">
+   <button class="btn red" onclick="checkShoppingSelection()">CONFERMA SELEZIONE</button>
+ </div>
+ <div id="feedback2a" class="feedback hidden"></div>
+</div>
+
+<div id="phase3" class="paperbox hidden">
+ <div class="kicker">Fase 3 — Estrazione lettere</div>
+ <p>Il piccione ti ha lasciato un promemoria con le parole e la posizione della lettera, ma <strong>non</strong> le lettere estratte. Ora tocca a voi: prendete le lettere dal mucchio, mettetele negli slot nell'ordine giusto (DIVANO → CUSCINO → COPERTA → LAMPADA) e formate la parola segreta. Attenzione: ci sono lettere esca!</p>
+ 
+ <div class="pigeon-box">
+   <div class="pigeon-avatar">🐦</div>
+   <div class="pigeon-text"><strong>Piccione:</strong> «L'ordine di lettura è inciso sul retro del quadro: <em>“Dal più grande al più piccolo, come si usa in una serata perfetta.”</em> Ossia: prima il mobile, poi ciò su cui ti siedi, poi ciò che ti copre, poi ciò che illumina. I numeri ti dicono quale lettera estrarre. Il resto del mucchio è spazzatura.»</div>
+ </div>
+
+ <div class="extraction-box" id="extractionBox"></div>
+ 
+ <p class="small" style="margin-top:12px"><strong>Mucchio di lettere:</strong> cliccate o trascinate una lettera nello slot vuoto.</p>
+ <div class="dnd-zone" id="lettersPoolZone" style="min-height:60px; border-color:var(--red)"></div>
+ 
+ <p class="small" style="margin-top:12px"><strong>Parola segreta:</strong> (cliccate su una lettera inserita per rimuoverla)</p>
+ <div class="dnd-zone" id="lettersZone" style="min-height:60px"></div>
+ 
+ <div class="actions">
+   <button class="btn light" onclick="resetLetters()">↺ SVUOTA SLOT</button>
+   <button class="btn red" onclick="checkFinalWord1()">SBLOCCA CASSETTO</button>
+ </div>
+ <div id="feedback1" class="feedback hidden"></div>
+</div>
+
+<div class="actions">
+ <button class="btn light" onclick="hint('hint1',10)">RICHIEDI AIUTO (−10 PT)</button>
+ <button id="next1" class="btn red hidden" onclick="show('room2')">CASSETTO APERTO →</button>
+</div>
+<div id="hint1" class="note hidden">
+ <strong>Indizio ufficiale:</strong><br>
+ • Fase 1: cliccate tutti e 4 gli oggetti per girarli.<br>
+ • Fase 2: le voci valide sono DIVANO, CUSCINO, COPERTA, LAMPADA. Le esche sono PATATA, CAVOLO, PELUCHE, PIZZA.<br>
+ • Fase 3: ordine = DIVANO (3ª) → CUSCINO (5ª) → COPERTA (6ª) → LAMPADA (2ª). Lettere: V, I, T, A. Parola finale: <strong>VITA</strong>.
+</div>
+</section>
+
+<!-- ============ STANZA 2 ============ -->
+<section id="room2" class="hidden">
+<div class="kicker">Stanza 02 · archivio fotografico</div>
+<div class="progress-wrap">
+ <div class="progress-label"><span>FASCICOLO 2 DI 4</span><span>CRITTOCIFRARIO</span></div>
+ <div class="progress"><span style="width:25%"></span></div>
+</div>
+<h2>La foto compromettente</h2>
+<p class="subtitle">Il sistema di sicurezza ha prodotto una fotografia dell'ultimo agente entrato nel caveau. Il volto è censurato per eccesso di carisma. Sul retro, un messaggio cifrato.</p>
+<div class="room">
+<svg viewBox="0 0 600 280" role="img" aria-label="Foto investigativa di un piccione">
+<rect x="10" y="10" width="580" height="260" fill="#d3c8b1" stroke="#756852" stroke-width="3"/>
+<text x="28" y="35" font-size="13" fill="#a83232" font-family="monospace">PROVA FOTOGRAFICA 07-A / NON DISTRUGGERE</text>
+<rect x="35" y="52" width="530" height="190" fill="#b7b19f"/>
+<path d="M80 220 L140 115 L190 220" fill="#8d9c8a"/><path d="M410 220 L460 100 L525 220" fill="#9aab96"/>
+<ellipse cx="306" cy="162" rx="78" ry="61" fill="#777b7c"/><circle cx="325" cy="95" r="47" fill="#8e9290"/>
+<circle cx="341" cy="87" r="6" fill="#191919"/><path d="M366 100 L399 112 L366 119" fill="#b87839"/>
+<path d="M273 155 Q309 118 348 166 Q310 198 273 155" fill="#5d6263"/>
+<path d="M290 211 L280 235 M326 211 L337 235" stroke="#a83232" stroke-width="6"/>
+<rect x="218" y="69" width="75" height="22" fill="#a83232" transform="rotate(-8 218 69)"/>
+<text x="225" y="84" font-size="11" fill="#fff" font-family="monospace" transform="rotate(-8 225 84)">CENSURATO</text>
+<text x="58" y="73" font-size="22" fill="#a83232" font-family="monospace">?</text>
+<text x="520" y="85" font-size="22" fill="#a83232" font-family="monospace">?</text>
+<text x="303" y="255" text-anchor="middle" font-size="11" fill="#2b2925" font-family="monospace">IL TESTIMONE HA VISTO TUTTO. E GIUDICA.</text>
+</svg>
+<div class="caption">L'immagine è una ricostruzione artistica. Il piccione ha chiesto un agente.</div>
+</div>
+
+<div class="pigeon-box">
+ <div class="pigeon-avatar">🐦</div>
+ <div class="pigeon-text">
+  <strong>Piccione Testimone:</strong> «Ciao. Sono stato io a vedere tutto. Ma non ti dico niente se non risolvi il mio cifrario. Il messaggio è <strong>HVBOP</strong>. Ogni lettera è stata spostata <em>avanti</em> di un certo numero di posizioni. Trova lo scarto giusto e leggerai la verità. P.S. Ho lasciato un regalino sul cuscino.»
+ </div>
+</div>
+
+<div class="paperbox">
+ <div class="kicker">Cifrario di Cesare — decifratore interattivo</div>
+ <p>Sposta lo slider per cambiare lo scarto. Il messaggio si aggiorna in tempo reale. Trova lo scarto che produce una parola di senso compiuto.</p>
+ <div class="cipher-display" id="cipherLive">HVBOP</div>
+ <div class="slider-wrap">
+   <span class="small">Scarto:</span>
+   <input type="range" id="caesarSlider" min="-25" max="25" value="0" oninput="updateCaesar()">
+   <span class="slider-val" id="caesarVal">0</span>
+ </div>
+ <p class="small">Suggerimento del tecnico: «Lo scarto è −1. La parola risultante è ciò che i piccioni lasciano sui monumenti... e sui cuscini.»</p>
+</div>
+
+<p><strong>Inserite la parola decifrata:</strong></p>
+<div class="codeform">
+ <input id="word2" placeholder="PAROLA DECIFRATA" maxlength="15" autocomplete="off">
+ <button class="btn red" onclick="checkWord2()">VERIFICA CODICE</button>
+</div>
+<div id="feedback2" class="feedback hidden"></div>
+<div class="actions">
+ <button class="btn light" onclick="hint('hint2',10)">CHIEDI UN INDIZIO (−10 PT)</button>
+ <button id="next2" class="btn red hidden" onclick="show('room3')">ARCHIVIO SBLOCCATO →</button>
+</div>
+<div id="hint2" class="note hidden">Lo scarto è <strong>−1</strong>. Il piccione è colpevole, e il cuscino ne è la prova. Cosa ci ha lasciato sopra? Ha a che fare con l'arte e con la digestione del piccione. Inizia con G e finisce con O.</div>
+</section>
+
+<!-- ============ STANZA 3 ============ -->
+<section id="room3" class="hidden">
+<div class="kicker">Stanza 03 · reperti sequestrati</div>
+<div class="progress-wrap">
+ <div class="progress-label"><span>FASCICOLO 3 DI 4</span><span>MEMORY + SEQUENZA</span></div>
+ <div class="progress"><span style="width:50%"></span></div>
+</div>
+<h2>La cassaforte delle faccende</h2>
+<p class="subtitle">Il precedente funzionario ha lasciato quattro reperti. Tre contengono indizi. Uno è una patata con un cappello. <strong>Prima</strong> trovate le coppie nel memory, <strong>poi</strong> cliccate i simboli nell'ordine giusto.</p>
+
+<div class="paperbox">
+ <div class="kicker">Fase 1 — Memory dei reperti</div>
+ <p>Trovate le 4 coppie di simboli. Ogni coppia trovata rivela un indizio.</p>
+ <div class="memory-grid" id="memoryGrid"></div>
+ <div id="memoryStatus" class="small">Coppie trovate: 0/4</div>
+</div>
+
+<div id="seqSection" class="paperbox hidden">
+ <div class="kicker">Fase 2 — Sequenza della cassaforte</div>
+ <p>Il memory ha rivelato l'ordine. Cliccate i simboli nella sequenza corretta:</p>
+ <div id="seqHint" class="note"></div>
+ <div class="seq-grid" id="seqGrid">
+   <button class="seq-btn" data-sym="🔑" onclick="seqClick('🔑')">🔑</button>
+   <button class="seq-btn" data-sym="☕" onclick="seqClick('☕')">☕</button>
+   <button class="seq-btn" data-sym="🥔" onclick="seqClick('🥔')">🥔</button>
+   <button class="seq-btn" data-sym="⏰" onclick="seqClick('⏰')">⏰</button>
+   <button class="seq-btn" data-sym="📖" onclick="seqClick('📖')">📖</button>
+   <button class="seq-btn" data-sym="✉️" onclick="seqClick('✉️')">✉️</button>
+ </div>
+ <div class="actions">
+   <button class="btn light" onclick="resetSeq()">↺ RICOMINCIA SEQUENZA</button>
+ </div>
+ <div id="feedback3" class="feedback hidden"></div>
+</div>
+
+<div class="actions">
+ <button class="btn light" onclick="hint('hint3',10)">CHIEDI UN INDIZIO (−10 PT)</button>
+ <button id="next3" class="btn red hidden" onclick="show('room4')">CASSAFORTE APERTA →</button>
+</div>
+<div id="hint3" class="note hidden">Memory: le coppie sono 🔑🔑, ☕☕, ⏰⏰, 📖📖. La sequenza corretta è <strong>🔑 → ☕ → ⏰ → 📖</strong>. La patata non va mai cliccata.</div>
+</section>
+
+<!-- ============ STANZA 4 ============ -->
+<section id="room4" class="hidden">
+<div class="kicker">Stanza 04 · terminale del Ministero</div>
+<div class="progress-wrap">
+ <div class="progress-label"><span>FASCICOLO 4 DI 4</span><span>CODICE FINALE</span></div>
+ <div class="progress"><span style="width:75%"></span></div>
+</div>
+<h2>Il terminale del piccione</h2>
+<p class="subtitle">Il sistema richiede una parola d'accesso. Sul terminale è rimasta una nota criptica, scritta da qualcuno che non aveva una tastiera funzionante.</p>
+
+<div class="paperbox center">
+ <div class="kicker">Nota criptica del terminale</div>
+ <div style="font-size:2.4rem;letter-spacing:.3em;font-weight:900;color:var(--red);margin:16px 0">T _ _ _ _ _ _ _ _ O</div>
+ <p style="font-size:1.05rem;font-weight:900;line-height:1.6;margin:16px 0;font-style:italic">
+   «Non ho gambe ma ti faccio correre,<br>
+   non ho voce ma ti faccio gridare.<br>
+   Il mio cuore è una batteria.<br>
+   Chi mi perde non guarda più niente.<br>
+   Dieci lettere ho, l'inizio e la fine non te li do.»
+ </p>
+ <p class="small">Il piccione suggerisce di non rispondere «divano».</p>
+</div>
+
+<div class="pigeon-box">
+ <div class="pigeon-avatar">🐦</div>
+ <div class="pigeon-text">
+  <strong>Piccione:</strong> «Attenzione, agente. Il terminale ha perso le vocali e la memoria. Risolvi il mio indovinello, rispondi alle 3 domande di verifica e dammi la parola d'accesso. Se sbagli, niente certificato. E io mi offendo.»
+ </div>
+</div>
+
+<div class="paperbox">
+ <div class="kicker">Verifica finale — 3 domande</div>
+ <div id="quiz4"></div>
+</div>
+
+<p><strong>Qual è la parola mancante?</strong></p>
+<div class="codeform">
+ <input id="word4" maxlength="15" placeholder="PAROLA SEGRETA" autocomplete="off">
+ <button class="btn red" onclick="checkWord4()">AUTENTICA</button>
+</div>
+<div id="feedback4" class="feedback hidden"></div>
+<div class="actions">
+ <button class="btn light" onclick="hint('hint4',10)">CHIEDI UN INDIZIO (−10 PT)</button>
+ <button id="next4" class="btn red hidden" onclick="show('bonus')">ACCEDI AL PROTOCOLLO BONUS →</button>
+</div>
+<div id="hint4" class="note hidden">
+ <strong>Indizio ufficiale:</strong> È l'oggetto che serve per cambiare canale, quello che litigate per chi lo tiene in mano e che sparisce sempre sotto i cuscini. Inizia con T e finisce con O. Ha 10 lettere.
+</div>
+</section>
+
+<!-- ============ BONUS ============ -->
+<section id="bonus" class="hidden">
+<div class="stamp">ANOMALIA RILEVATA</div>
+<div class="center" style="font-size:3rem;margin:14px">🚨 🛋️ 🐦</div>
+<div class="kicker">Protocollo bonus · fuori programma</div>
+<h2>Allarme: troppo amore nell'ufficio</h2>
+<p>Il sistema ha rilevato un livello di affetto superiore alla soglia consentita. Il regolamento non prevede cosa fare in questi casi, quindi il server ha iniziato a sudare.</p>
+<div class="paperbox">
+ <p><strong>Procedura fisica obbligatoria:</strong></p>
+ <ol>
+  <li>Posate entrambi i telefoni.</li>
+  <li>Guardatevi negli occhi per cinque secondi senza ridere.</li>
+  <li>Pronunciate insieme la password segreta:</li>
+ </ol>
+ <h2 class="center redtext">«IL DIVANO È NOSTRO»</h2>
+</div>
+<p class="small">Il sistema non può verificare l'esecuzione. Si fida, ma ha aperto una pratica di 83 pagine.</p>
+<div class="actions">
+ <button class="btn red" onclick="finish()">PROCEDURA ESEGUITA ✓</button>
+</div>
+</section>
+
+<!-- ============ FINALE ============ -->
+<section id="final" class="hidden">
+<div class="center">
+ <div class="stamp">PRATICA CHIUSA · FORSE</div>
+ <div style="font-size:3rem;margin:15px">🏆</div>
+ <div class="kicker">Verdetto ufficiale del Ministero</div>
+ <h2>LICENZA DI CONVIVENZA CONCESSA</h2>
+ <p class="subtitle">Con riserva di verifica del telecomando, delle coperte e di eventuali patate sospette.</p>
+</div>
+<div id="finalStats" class="paperbox center"></div>
+<div class="paperbox center">
+ <p>Il comitato, composto da un piccione laureato in psicologia e da una stampante inceppata, certifica che</p>
+ <h2>Marta Pasticcioni<br><span class="redtext">&</span><br>Giulio Calzinpersi</h2>
+ <p>hanno decifrato codici, interrogato mobili e collaborato con una patata in cappello. Nessuna dignità è stata ritrovata sul luogo del fatto.</p>
+ <div class="award">AGENTI SPECIALI DEL CAOS DOMESTICO</div>
+ <p>Validità: fino al prossimo «fai tu».</p>
+</div>
+<div class="certificate" id="certificate">
+ <div class="kicker">Ministero degli Affari Coniugali</div>
+ <div class="seal">M.A.<br>04</div>
+ <h2 style="font-family:Georgia,serif">Certificato di<br>sopravvivenza coniugale</h2>
+ <p>Si certifica che</p>
+ <h2 style="font-size:1.5rem">Marta Pasticcioni & Giulio Calzinpersi</h2>
+ <p>sono autorizzati a condividere divano, coperte e responsabilità domestiche, sotto costante osservazione burocratica.</p>
+ <div class="award">LICENZA DI CONVIVENZA ATTIVA</div>
+ <p><em>Il Ministero non garantisce chi abbia lasciato il calzino in corridoio.</em></p>
+ <div class="rule"></div>
+ <p style="font-family:Georgia,serif;font-size:1.05rem">«Vi auguro una vita piena di amore, risate, pazienza e una persona che sappia sempre dove sono le chiavi. Il Ministero non garantisce quest'ultimo punto.»</p>
+ <p class="small">TIMBRO UFFICIALE · VALIDITÀ FINO A NUOVO DRAMMA</p>
+</div>
+<div class="actions no-print">
+ <button class="btn red" onclick="window.print()">STAMPA / SALVA CERTIFICATO</button>
+ <button class="btn light" onclick="restart()">RIPETERE L'ISPEZIONE</button>
+</div>
+</section>
+</main>
+<div class="footer">M.A.T.R.I.M.O.N.I.O. — Ministero per l'Accertamento delle Unioni, la Tutela delle Relazioni, l'Ispezione dei Mobili, l'Organizzazione e il Controllo degli Obblighi.<br>Il piccione non è un dipendente pubblico. La patata è in attesa di un legale.</div>
+</div>
+
+<script>
+/* ============================================================
+   STATO GLOBALE
+   ============================================================ */
+const state = {
+  score: 0,
+  hintsUsed: 0,
+  startTime: null,
+  timerInterval: null,
+  room3: { memoryMatched: 0, seqProgress: 0 },
+  room4: { quizDone: false }
+};
+
+/* Stanza 1 */
+const FINAL_WORD1 = "VITA";
+const ROTATE_ITEMS = [
+  { id:"divano",  face:"🛋️", word:"DIVANO" },
+  { id:"cuscino", face:"🟫", word:"CUSCINO" },
+  { id:"coperta", face:"🧣", word:"COPERTA" },
+  { id:"lampada", face:"💡", word:"LAMPADA" }
+];
+const SHOP_ITEMS = [
+  { word:"DIVANO",  num:3, valid:true  },
+  { word:"PATATA",  num:1, valid:false },
+  { word:"CUSCINO", num:5, valid:true  },
+  { word:"CAVOLO",  num:2, valid:false },
+  { word:"COPERTA", num:6, valid:true  },
+  { word:"PELUCHE", num:4, valid:false },
+  { word:"LAMPADA", num:2, valid:true  },
+  { word:"PIZZA",   num:7, valid:false }
+];
+const room1State = {
+  rotated: new Set(),
+  selected: new Set(),
+  lettersPool: [],
+  lettersPlaced: {}
+};
+
+/* Stanza 3 */
+const SEQUENZA_CORRETTA = ["🔑","☕","⏰","📖"];
+const MEMORY_PAIRS = ["🔑","☕","⏰","📖"];
+
+/* ============================================================
+   AUDIO
+   ============================================================ */
+let audioCtx = null;
+function beep(freq=440, dur=0.08, type="sine", vol=0.04){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.value = vol;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+    o.stop(audioCtx.currentTime + dur);
+  }catch(e){}
+}
+function sfxGood(){ beep(660,0.1); setTimeout(()=>beep(880,0.12),100); }
+function sfxBad(){ beep(200,0.18,"sawtooth",0.05); }
+function sfxClick(){ beep(500,0.04,"square",0.03); }
+function sfxWin(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.15),i*110)); }
+
+/* ============================================================
+   TIMER E PUNTEGGIO
+   ============================================================ */
+function startTimer(){
+  if(state.startTime) return;
+  state.startTime = Date.now();
+  state.timerInterval = setInterval(updateTimer, 1000);
+}
+function updateTimer(){
+  const el = document.getElementById("timerDisplay");
+  if(!state.startTime){ el.textContent = "⏱ 00:00"; return; }
+  const sec = Math.floor((Date.now() - state.startTime)/1000);
+  const m = String(Math.floor(sec/60)).padStart(2,"0");
+  const s = String(sec%60).padStart(2,"0");
+  el.textContent = `⏱ ${m}:${s}`;
+  if(sec > 900) el.classList.add("warn"); else el.classList.remove("warn");
+}
+function addScore(n){ state.score = Math.max(0, state.score + n); updateScoreUI(); }
+function updateScoreUI(){ document.getElementById("scoreDisplay").textContent = `PUNTI: ${state.score}`; }
+
+/* ============================================================
+   NAVIGAZIONE
+   ============================================================ */
+function begin(){ startTimer(); show("room1"); initRotate(); }
+function show(id){
+  document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  window.scrollTo({top:0, behavior:"smooth"});
+  if(id === "final"){ sfxWin(); }
+}
+function hint(id, cost){
+  const el = document.getElementById(id);
+  const wasHidden = el.classList.contains("hidden");
+  el.classList.toggle("hidden");
+  if(wasHidden){ state.hintsUsed++; addScore(-(cost||10)); sfxClick(); }
+}
+
+/* ============================================================
+   STANZA 1 — FASE 1: ROTAZIONE
+   ============================================================ */
+function initRotate(){
+  room1State.rotated.clear();
+  room1State.selected.clear();
+  room1State.lettersPool = [];
+  room1State.lettersPlaced = {};
+  const grid = document.getElementById("rotateGrid");
+  grid.innerHTML = "";
+  ROTATE_ITEMS.forEach(item=>{
+    const el = document.createElement("div");
+    el.className = "rotate-item";
+    el.dataset.id = item.id;
+    el.innerHTML = `<span class="face">${item.face}</span><span class="back">${item.word}</span>`;
+    el.addEventListener("click", ()=> rotateItem(item.id, el));
+    grid.appendChild(el);
+  });
+  document.getElementById("rotateStatus").textContent = "Oggetti girati: 0/4";
+  document.getElementById("inventory1").innerHTML = "<strong>PAROLE SUL RETRO:</strong> nessuna ancora.";
+  document.getElementById("phase2").classList.add("hidden");
+  document.getElementById("phase3").classList.add("hidden");
+  document.getElementById("next1").classList.add("hidden");
+  document.getElementById("feedback1").classList.add("hidden");
+  document.getElementById("feedback2a").classList.add("hidden");
+  document.getElementById("progress1").textContent = "FASE 1/3";
+  document.getElementById("bar1").style.width = "0";
+}
+
+function rotateItem(id, el){
+  if(room1State.rotated.has(id)){
+    el.classList.toggle("flipped");
+    return;
+  }
+  room1State.rotated.add(id);
+  el.classList.add("flipped","done");
+  sfxClick();
+  addScore(5);
+  document.getElementById("rotateStatus").textContent =
+    `Oggetti girati: ${room1State.rotated.size}/4`;
+  updateRotateInventory();
+  if(room1State.rotated.size === 4){
+    document.getElementById("progress1").textContent = "FASE 2/3";
+    document.getElementById("bar1").style.width = "12%";
+    setTimeout(()=>{
+      document.getElementById("phase2").classList.remove("hidden");
+      initShopping();
+      document.getElementById("phase2").scrollIntoView({behavior:"smooth"});
+      sfxGood();
+    }, 400);
+  }
+}
+
+function updateRotateInventory(){
+  const inv = document.getElementById("inventory1");
+  const words = Array.from(room1State.rotated).map(id=>{
+    const it = ROTATE_ITEMS.find(x=>x.id===id);
+    return `<span class="item">${it.word}</span>`;
+  });
+  inv.innerHTML = "<strong>PAROLE SUL RETRO:</strong> " + (words.length ? words.join("") : "nessuna ancora.");
+}
+
+/* ============================================================
+   STANZA 1 — FASE 2: LISTA DELLA SPESA
+   ============================================================ */
+function initShopping(){
+  const list = document.getElementById("shoppingList");
+  list.innerHTML = "";
+  room1State.selected.clear();
+  SHOP_ITEMS.forEach((item, i)=>{
+    const el = document.createElement("div");
+    el.className = "shop-item";
+    el.dataset.i = i;
+    el.innerHTML = `
+      <div class="check">✓</div>
+      <div class="word">${item.word}</div>
+      <div class="num">${item.num}ª</div>
+    `;
+    el.addEventListener("click", ()=>{
+      if(room1State.selected.has(i)){
+        room1State.selected.delete(i);
+        el.classList.remove("selected");
+      } else {
+        room1State.selected.add(i);
+        el.classList.add("selected");
+        sfxClick();
+      }
+    });
+    list.appendChild(el);
+  });
+}
+
+function checkShoppingSelection(){
+  const fb = document.getElementById("feedback2a");
+  fb.classList.remove("hidden","bad","good");
+  const selected = Array.from(room1State.selected);
+  const validIdx = SHOP_ITEMS.map((x,i)=> x.valid ? i : -1).filter(i=>i>=0);
+  const correctSet = new Set(validIdx);
+  const selectedSet = new Set(selected);
+  const allCorrect = selected.length === validIdx.length && validIdx.every(i=> selectedSet.has(i));
+  if(allCorrect){
+    fb.classList.add("good");
+    fb.textContent = "Selezione corretta! Le 4 voci valide sono DIVANO, CUSCINO, COPERTA, LAMPADA. +15 punti.";
+    addScore(15);
+    sfxGood();
+    document.getElementById("progress1").textContent = "FASE 3/3";
+    document.getElementById("bar1").style.width = "25%";
+    setTimeout(()=>{
+      document.getElementById("phase3").classList.remove("hidden");
+      initExtraction();
+      document.getElementById("phase3").scrollIntoView({behavior:"smooth"});
+    }, 500);
+  } else {
+    fb.classList.add("bad");
+    const wrongPicks = selected.filter(i=> !correctSet.has(i)).map(i=> SHOP_ITEMS[i].word);
+    const missing = validIdx.filter(i=> !selectedSet.has(i)).map(i=> SHOP_ITEMS[i].word);
+    let msg = "Selezione errata. ";
+    if(wrongPicks.length) msg += `Hai incluso esche: ${wrongPicks.join(", ")}. `;
+    if(missing.length) msg += `Mancano: ${missing.join(", ")}. `;
+    msg += "Il piccione scuote la testa.";
+    fb.textContent = msg;
+    addScore(-5); sfxBad();
+  }
+}
+
+/* ============================================================
+   STANZA 1 — FASE 3: ESTRAZIONE LETTERE (SENZA SPOILER)
+   ============================================================ */
+function initExtraction(){
+  const box = document.getElementById("extractionBox");
+  box.innerHTML = "";
+  const validItems = SHOP_ITEMS.filter(x=>x.valid);
+  validItems.forEach(item=>{
+    const row = document.createElement("div");
+    row.className = "extract-row";
+    row.innerHTML = `
+      <span class="word">${item.word}</span>
+      <span class="hintnum">→ prendi la ${item.num}ª lettera</span>
+    `;
+    box.appendChild(row);
+  });
+
+  const correctLetters = validItems.map(it => it.word[it.num - 1]); 
+  const decoyLetters = ['R', 'O', 'S', 'C', 'N', 'D', 'L', 'E']; 
+  const allLetters = [...correctLetters, ...decoyLetters];
+  
+  allLetters.sort(() => Math.random() - 0.5);
+
+  room1State.lettersPool = allLetters.map((letter, idx) => ({
+    id: idx,
+    letter: letter,
+    placed: false,
+    slot: null,
+    isCorrect: correctLetters.includes(letter)
+  }));
+
+  room1State.lettersPlaced = {}; 
+  renderLettersDnd();
+}
+
+function renderLettersDnd(){
+  const poolZone = document.getElementById("lettersPoolZone");
+  const slotsZone = document.getElementById("lettersZone");
+  poolZone.innerHTML = "";
+  slotsZone.innerHTML = "";
+
+  room1State.lettersPool.forEach(item => {
+    if (item.placed) return;
+    const el = document.createElement("div");
+    el.className = "dnd-item";
+    el.textContent = item.letter;
+    el.dataset.id = item.id;
+    el.draggable = true;
+    
+    el.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("text/plain", String(item.id));
+      sfxClick();
+    });
+    
+    el.addEventListener("click", () => {
+      const emptySlot = [0,1,2,3].find(i => !room1State.lettersPlaced[i]);
+      if (emptySlot !== undefined) {
+        placeLetterInSlot(item.id, emptySlot);
+      } else {
+        sfxBad(); 
+      }
+    });
+    
+    poolZone.appendChild(el);
+  });
+
+  for (let i = 0; i < 4; i++) {
+    const slot = document.createElement("div");
+    slot.className = "dnd-target";
+    slot.dataset.slot = i;
+    
+    slot.addEventListener("dragover", e => { e.preventDefault(); slot.classList.add("over"); });
+    slot.addEventListener("dragleave", () => slot.classList.remove("over"));
+    slot.addEventListener("drop", e => {
+      e.preventDefault();
+      slot.classList.remove("over");
+      const id = parseInt(e.dataTransfer.getData("text/plain"), 10);
+      placeLetterInSlot(id, i);
+    });
+
+    if (room1State.lettersPlaced[i]) {
+      slot.textContent = room1State.lettersPlaced[i].letter;
+      slot.classList.add("filled");
+      slot.addEventListener("click", () => removeLetterFromSlot(i));
+    } else {
+      slot.textContent = "";
+    }
+    
+    slotsZone.appendChild(slot);
+  }
+}
+
+function placeLetterInSlot(letterId, slotIndex) {
+  if (room1State.lettersPlaced[slotIndex]) {
+    const oldId = room1State.lettersPlaced[slotIndex].id;
+    const oldItem = room1State.lettersPool.find(x => x.id === oldId);
+    if (oldItem) { oldItem.placed = false; oldItem.slot = null; }
+  }
+  
+  const item = room1State.lettersPool.find(x => x.id === letterId);
+  if (!item) return;
+  item.placed = true;
+  item.slot = slotIndex;
+  room1State.lettersPlaced[slotIndex] = { id: letterId, letter: item.letter };
+  
+  sfxClick();
+  renderLettersDnd();
+}
+
+function removeLetterFromSlot(slotIndex) {
+  const placed = room1State.lettersPlaced[slotIndex];
+  if (!placed) return;
+  const item = room1State.lettersPool.find(x => x.id === placed.id);
+  if (item) { item.placed = false; item.slot = null; }
+  delete room1State.lettersPlaced[slotIndex];
+  sfxClick();
+  renderLettersDnd();
+}
+
+function resetLetters(){
+  room1State.lettersPool.forEach(x => { x.placed = false; x.slot = null; });
+  room1State.lettersPlaced = {};
+  renderLettersDnd();
+  document.getElementById("feedback1").classList.add("hidden");
+}
+
+function checkFinalWord1(){
+  const fb = document.getElementById("feedback1");
+  fb.classList.remove("hidden","bad","good");
+  
+  const placedCount = Object.keys(room1State.lettersPlaced).length;
+  if (placedCount < 4) {
+    fb.classList.add("bad");
+    fb.textContent = "Mancano lettere negli slot. Riempite tutti e 4 gli spazi.";
+    sfxBad();
+    return;
+  }
+  
+  const word = [0,1,2,3].map(i => room1State.lettersPlaced[i]?.letter || "").join("");
+  
+  if (word === FINAL_WORD1) {
+    fb.classList.add("good");
+    fb.textContent = `Cassetto aperto! La parola segreta era ${FINAL_WORD1}. Dentro: una ricevuta per 400 cuscini e una nota: «Non chiedete perché». +25 punti.`;
+    addScore(25);
+    document.getElementById("next1").classList.remove("hidden");
+    document.getElementById("bar1").style.width = "25%";
+    sfxGood();
+  } else {
+    fb.classList.add("bad");
+    fb.textContent = `La parola "${word}" non apre il cassetto. Ripensate all'ordine e alle lettere da estrarre.`;
+    addScore(-5); 
+    sfxBad();
+  }
+}
+
+/* ============================================================
+   STANZA 2 — CIFRARIO DI CESARE
+   ============================================================ */
+const CIPHER_TEXT = "HVBOP";
+function caesarShift(str, shift){
+  return str.split("").map(ch=>{
+    if(ch < "A" || ch > "Z") return ch;
+    let code = ch.charCodeAt(0) - 65;
+    code = (code + shift + 26) % 26;
+    return String.fromCharCode(code + 65);
+  }).join("");
+}
+function updateCaesar(){
+  const shift = parseInt(document.getElementById("caesarSlider").value, 10);
+  document.getElementById("caesarVal").textContent = shift > 0 ? "+"+shift : shift;
+  document.getElementById("cipherLive").textContent = caesarShift(CIPHER_TEXT, shift);
+}
+function checkWord2(){
+  const v = document.getElementById("word2").value.trim().toUpperCase();
+  const fb = document.getElementById("feedback2");
+  fb.classList.remove("hidden","bad","good");
+  if(v === "GUANO"){
+    fb.classList.add("good");
+    fb.textContent = "Codice accettato. Il testimone piccione ammette: «Volevo solo lasciare un messaggio artistico sul divano». +20 punti.";
+    addScore(20);
+    document.getElementById("next2").classList.remove("hidden");
+    sfxGood();
+  } else {
+    fb.classList.add("bad");
+    fb.textContent = "Il terminale emette un suono da stampante del 1998. Spostate ogni lettera indietro di una posizione. Lo slider può aiutarvi.";
+    addScore(-5); sfxBad();
+  }
+}
+
+/* ============================================================
+   STANZA 3 — MEMORY + SEQUENZA
+   ============================================================ */
+let memoryDeck = [];
+let memoryFlipped = [];
+let memoryLock = false;
+
+function initMemory(){
+  memoryDeck = [];
+  MEMORY_PAIRS.forEach(p=>{
+    memoryDeck.push({ sym:p, matched:false });
+    memoryDeck.push({ sym:p, matched:false });
+  });
+  memoryDeck.sort(()=>Math.random()-0.5);
+  memoryFlipped = [];
+  memoryLock = false;
+  state.room3.memoryMatched = 0;
+  state.room3.seqProgress = 0;
+  renderMemory();
+  document.getElementById("seqSection").classList.add("hidden");
+  document.getElementById("feedback3").classList.add("hidden");
+  document.getElementById("next3").classList.add("hidden");
+  document.querySelectorAll(".seq-btn").forEach(b=> b.classList.remove("correct","active","wrong"));
+}
+function renderMemory(){
+  const grid = document.getElementById("memoryGrid");
+  grid.innerHTML = "";
+  memoryDeck.forEach((card, i)=>{
+    const el = document.createElement("div");
+    el.className = "memory-card";
+    el.dataset.idx = i;
+    if(card.matched) el.classList.add("matched","flipped");
+    el.textContent = card.matched ? card.sym : "?";
+    el.addEventListener("click", ()=> memoryClick(i));
+    grid.appendChild(el);
+  });
+  document.getElementById("memoryStatus").textContent =
+    `Coppie trovate: ${state.room3.memoryMatched}/4`;
+}
+function memoryClick(i){
+  if(memoryLock) return;
+  const card = memoryDeck[i];
+  if(card.matched) return;
+  if(memoryFlipped.includes(i)) return;
+  sfxClick();
+  memoryFlipped.push(i);
+  const el = document.querySelector(`.memory-card[data-idx="${i}"]`);
+  el.classList.add("flipped");
+  el.textContent = card.sym;
+  if(memoryFlipped.length === 2){
+    memoryLock = true;
+    const [a,b] = memoryFlipped;
+    if(memoryDeck[a].sym === memoryDeck[b].sym){
+      memoryDeck[a].matched = true;
+      memoryDeck[b].matched = true;
+      state.room3.memoryMatched++;
+      addScore(10);
+      sfxGood();
+      setTimeout(()=>{
+        memoryFlipped = []; memoryLock = false;
+        renderMemory();
+        if(state.room3.memoryMatched === 4){
+          document.getElementById("seqSection").classList.remove("hidden");
+          document.getElementById("seqHint").innerHTML = "<strong>Indizio rivelato:</strong> l'ordine è <em>la chiave che apre, la tazza che scalda, l'orologio che segna, il libro che racconta</em>. Cliccate i simboli in quest'ordine.";
+          document.getElementById("seqSection").scrollIntoView({behavior:"smooth"});
+        }
+      }, 700);
+    } else {
+      sfxBad();
+      setTimeout(()=>{
+        memoryFlipped.forEach(idx=>{
+          const e = document.querySelector(`.memory-card[data-idx="${idx}"]`);
+          e.classList.remove("flipped");
+          e.textContent = "?";
+        });
+        memoryFlipped = []; memoryLock = false;
+      }, 900);
+    }
+  }
+}
+function seqClick(sym){
+  const btn = document.querySelector(`.seq-btn[data-sym="${sym}"]`);
+  if(!btn) return;
+  sfxClick();
+  btn.classList.add("active");
+  setTimeout(()=> btn.classList.remove("active"), 200);
+  const expected = SEQUENZA_CORRETTA[state.room3.seqProgress];
+  if(sym === expected){
+    state.room3.seqProgress++;
+    btn.classList.add("correct");
+    addScore(5);
+    if(state.room3.seqProgress === SEQUENZA_CORRETTA.length){
+      const fb = document.getElementById("feedback3");
+      fb.classList.remove("hidden","bad","good");
+      fb.classList.add("good");
+      fb.textContent = "Cassaforte aperta! Dentro: un timbro, una graffetta e una patata con un cappello più piccolo. +30 punti.";
+      addScore(30);
+      document.getElementById("next3").classList.remove("hidden");
+      sfxGood();
+    }
+  } else {
+    btn.classList.add("wrong");
+    setTimeout(()=> btn.classList.remove("wrong","correct"), 400);
+    sfxBad();
+    addScore(-5);
+    const fb = document.getElementById("feedback3");
+    fb.classList.remove("hidden","bad","good");
+    fb.classList.add("bad");
+    fb.textContent = "Sequenza sbagliata! La cassaforte si è offesa. Riprovate dall'inizio.";
+    state.room3.seqProgress = 0;
+    document.querySelectorAll(".seq-btn").forEach(b=> b.classList.remove("correct","active","wrong"));
+  }
+}
+function resetSeq(){
+  state.room3.seqProgress = 0;
+  document.querySelectorAll(".seq-btn").forEach(b=> b.classList.remove("correct","active","wrong"));
+  const fb = document.getElementById("feedback3");
+  fb.classList.add("hidden");
+  fb.textContent = "";
+}
+
+/* ============================================================
+   STANZA 4 — QUIZ + PAROLA
+   ============================================================ */
+const QUIZ = [
+  { q:"Quale oggetto NON era un vero reperto nella Stanza 1?", opts:["Lampada","Cuscino","Patata","Divano"], correct:2 },
+  { q:"In che ordine bisognava cliccare i simboli della cassaforte?", opts:["⏰ → ☕ → 🔑 → 📖","🔑 → ☕ → ⏰ → 📖","🔑 → ⏰ → ☕ → 📖","📖 → 🔑 → ☕ → ⏰"], correct:1 },
+  { q:"Quante lettere ha la parola segreta che apre il terminale finale?", opts:["6","8","10","12"], correct:2 }
+];
+function initQuiz(){
+  const box = document.getElementById("quiz4");
+  box.innerHTML = "";
+  state.room4.quizDone = false;
+  QUIZ.forEach((item, qi)=>{
+    const div = document.createElement("div");
+    div.className = "note";
+    div.innerHTML = `<strong>${qi+1}. ${item.q}</strong>`;
+    item.opts.forEach((opt, oi)=>{
+      const b = document.createElement("button");
+      b.className = "option";
+      b.style.marginTop = "6px";
+      b.textContent = opt;
+      b.dataset.q = qi; b.dataset.o = oi;
+      b.addEventListener("click", ()=>{
+        div.querySelectorAll(".option").forEach(x=>{
+          x.classList.remove("selected");
+          x.style.borderColor = ""; x.style.background = "";
+        });
+        b.classList.add("selected");
+        if(oi === item.correct){
+          b.style.borderColor = "var(--green)";
+          b.style.background = "#e4f0e8";
+          addScore(5);
+          sfxGood();
+          checkQuizDone();
+        } else {
+          b.style.borderColor = "var(--red)";
+          b.style.background = "#f4e4df";
+          addScore(-5); sfxBad();
+        }
+      });
+      div.appendChild(b);
+    });
+    box.appendChild(div);
+  });
+}
+function checkQuizDone(){
+  const selected = {};
+  document.querySelectorAll("#quiz4 .option.selected").forEach(b=>{
+    selected[b.dataset.q] = parseInt(b.dataset.o,10);
+  });
+  const done = QUIZ.every((q,i)=> selected[i] === q.correct);
+  if(done) state.room4.quizDone = true;
+}
+function checkWord4(){
+  const v = document.getElementById("word4").value.trim().toUpperCase();
+  const fb = document.getElementById("feedback4");
+  fb.classList.remove("hidden","bad","good");
+  if(!state.room4.quizDone){
+    fb.classList.add("bad");
+    fb.textContent = "Prima di dare la parola, rispondete correttamente a tutte e 3 le domande di verifica. Il piccione controlla.";
+    sfxBad();
+    return;
+  }
+  if(v === "TELECOMANDO"){
+    fb.classList.add("good");
+    fb.textContent = "Accesso autorizzato. Il piccione ha consegnato il fascicolo finale e si è preso il merito. +25 punti.";
+    addScore(25);
+    document.getElementById("next4").classList.remove("hidden");
+    sfxGood();
+  } else {
+    fb.classList.add("bad");
+    fb.textContent = "Accesso negato. Il divano non dimentica. Riprovate.";
+    addScore(-5); sfxBad();
+  }
+}
+
+/* ============================================================
+   FINALE
+   ============================================================ */
+function finish(){
+  show("final");
+  if(state.timerInterval) clearInterval(state.timerInterval);
+  const sec = Math.floor((Date.now() - state.startTime)/1000);
+  const m = Math.floor(sec/60), s = sec%60;
+  let rating = "Agenti del Caos";
+  if(state.score >= 180) rating = "Leggende del Divano";
+  else if(state.score >= 120) rating = "Agenti Speciali";
+  else if(state.score >= 60) rating = "Reclute Promettenti";
+  document.getElementById("finalStats").innerHTML = `
+    <div class="kicker">Rapporto finale</div>
+    <p><strong>Punteggio:</strong> ${state.score} pt<br>
+    <strong>Tempo:</strong> ${m}min ${s}s<br>
+    <strong>Indizi usati:</strong> ${state.hintsUsed}</p>
+    <span class="badge gold">${rating}</span>
+  `;
+}
+
+/* ============================================================
+   RESTART
+   ============================================================ */
+function restart(){
+  if(state.timerInterval) clearInterval(state.timerInterval);
+  state.score = 0; state.hintsUsed = 0; state.startTime = null; state.timerInterval = null;
+  state.room3 = { memoryMatched:0, seqProgress:0 };
+  state.room4 = { quizDone:false };
+  updateScoreUI();
+  document.getElementById("timerDisplay").textContent = "⏱ 00:00";
+  document.getElementById("timerDisplay").classList.remove("warn");
+  ["word2","word4"].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=""; });
+  ["feedback1","feedback2","feedback2a","feedback3","feedback4","hint1","hint2","hint3","hint4","seqSection","next1","next2","next3","next4"].forEach(id=>{
+    const e = document.getElementById(id); if(e) e.classList.add("hidden");
+  });
+  initMemory();
+  initQuiz();
+  updateCaesar();
+  document.getElementById("caesarSlider").value = 0;
+  document.getElementById("caesarVal").textContent = "0";
+  document.getElementById("cipherLive").textContent = CIPHER_TEXT;
+  show("intro");
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+window.addEventListener("DOMContentLoaded", ()=>{
+  updateScoreUI();
+  initMemory();
+  initQuiz();
+  updateCaesar();
+});
+</script>
+</body>
+</html>
